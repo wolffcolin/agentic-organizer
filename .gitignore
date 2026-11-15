@@ -1,0 +1,27 @@
+# Node / Electron
+node_modules/
+out/
+dist/
+release/
+*.log
+
+# Python (organizer / extractor)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local data — never commit real user files
+*.db
+*.sqlite
+demo-folder/
+demo_folder/
+private/
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
