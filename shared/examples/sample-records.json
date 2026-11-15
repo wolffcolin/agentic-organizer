@@ -1,0 +1,92 @@
+{
+  "root": "<scanned folder>",
+  "scanned_at": "2026-11-15T12:00:00Z",
+  "_note": "SYNTHETIC data mirroring the 5 proposal examples. CSCI 498 HW dates are placeholders until the real syllabus is labeled.",
+  "records": [
+    {
+      "id": "f1",
+      "path": "CSCI 575 Course Notes/Lecture7.pdf",
+      "class": "CSCI575",
+      "proposed_name": "CSCI575_Lec07_Eigenvalues.pdf",
+      "proposed_folder": "CSCI575/LectureNotes",
+      "confidence": 0.95,
+      "needs_user": false,
+      "summary": "Lecture 7 notes on eigenvalues and eigenvectors.",
+      "items": []
+    },
+    {
+      "id": "f2",
+      "path": "Downloads/syllabus (1).pdf",
+      "class": "CSCI498",
+      "proposed_name": "CSCI498_Syllabus.pdf",
+      "proposed_folder": "CSCI498",
+      "confidence": 0.92,
+      "needs_user": false,
+      "summary": "CSCI 498 syllabus with homework schedule and exam dates.",
+      "items": [
+        { "id": "f2-hw1", "type": "deadline", "text": "HW 1", "date": "2026-09-04", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw2", "type": "deadline", "text": "HW 2", "date": "2026-09-18", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw3", "type": "deadline", "text": "HW 3", "date": "2026-10-02", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw4", "type": "deadline", "text": "HW 4", "date": "2026-10-09", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-mid", "type": "exam", "text": "Midterm", "date": "2026-10-14", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw5", "type": "deadline", "text": "HW 5", "date": "2026-10-30", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw6", "type": "deadline", "text": "HW 6", "date": "2026-11-13", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw7", "type": "deadline", "text": "HW 7", "date": "2026-11-20", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-hw8", "type": "deadline", "text": "HW 8", "date": "2026-12-04", "sources": ["Downloads/syllabus (1).pdf"] },
+        { "id": "f2-final", "type": "exam", "text": "Final exam", "date": "2026-12-10", "sources": ["Downloads/syllabus (1).pdf"] }
+      ]
+    },
+    {
+      "id": "f3",
+      "path": "Notes.docx",
+      "class": "CSCI498",
+      "proposed_name": "CSCI498_Ch07_StudyGuide.docx",
+      "proposed_folder": "CSCI498/Notes",
+      "confidence": 0.81,
+      "needs_user": false,
+      "summary": "Chapter 7 study guide.",
+      "items": [
+        {
+          "id": "f3-study7",
+          "type": "todo",
+          "text": "Study ch. 7",
+          "date": "2026-10-12",
+          "sources": ["Notes.docx"],
+          "note": "Placed before the CSCI 498 midterm (Oct 14)."
+        }
+      ]
+    },
+    {
+      "id": "f4",
+      "path": "img1099.png",
+      "class": null,
+      "proposed_name": null,
+      "proposed_folder": null,
+      "confidence": 0.2,
+      "needs_user": true,
+      "question": "Whiteboard photo. Which class is this from?",
+      "summary": "Photo of a whiteboard with matrix notation.",
+      "items": []
+    },
+    {
+      "id": "f5",
+      "path": "Downloads/DSCI475 announcement - HW4 extension.pdf",
+      "class": "DSCI475",
+      "proposed_name": "DSCI475_Announcement_HW4_Extension.pdf",
+      "proposed_folder": "DSCI475/Announcements",
+      "confidence": 0.88,
+      "needs_user": false,
+      "summary": "Announcement moving HW 4 from Nov 10 to Nov 12.",
+      "items": [
+        {
+          "id": "dsci475-hw4",
+          "type": "deadline",
+          "text": "HW 4",
+          "date": "2026-11-12",
+          "sources": ["DSCI475/DSCI475_Syllabus.pdf", "Downloads/DSCI475 announcement - HW4 extension.pdf"],
+          "note": "Syllabus says Nov 10; later announcement moves it to Nov 12."
+        }
+      ]
+    }
+  ]
+}

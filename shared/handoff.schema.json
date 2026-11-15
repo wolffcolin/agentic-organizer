@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "student-folder-organizer/handoff.schema.json",
+  "title": "Scan output: one record per file (DRAFT, to be agreed by Organizer, Extractor and Planner)",
+  "description": "Produced by the agent inside the sandbox and consumed by the Electron app. Paths are relative to the scanned root and use forward slashes.",
+  "type": "object",
+  "required": ["root", "records"],
+  "properties": {
+    "root": { "type": "string", "description": "Absolute path of the scanned folder (as seen by the host)." },
+    "scanned_at": { "type": "string", "format": "date-time" },
+    "records": { "type": "array", "items": { "$ref": "#/$defs/fileRecord" } }
+  },
+  "$defs": {
+    "fileRecord": {
+      "type": "object",
+      "required": ["id", "path", "class", "proposed_name", "proposed_folder", "confidence", "needs_user", "items"],
+      "properties": {
+        "id": { "type": "string", "description": "Stable id, e.g. hash of path. Used by approve/reject." },
+        "path": { "type": "string", "description": "Current path relative to root." },
+        "class": { "type": ["string", "null"], "description": "Course code like CSCI575, or null if unknown." },
+        "proposed_name": { "type": ["string", "null"], "description": "New file name, or null to keep the name." },
+        "proposed_folder": { "type": ["string", "null"], "description": "Destination folder relative to root, or null for no move." },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "needs_user": { "type": "boolean", "description": "True when the agent wants to ask the user instead of guessing (proposal example 4)." },
+        "question": { "type": "string", "description": "What to ask the user when needs_user is true." },
+        "summary": { "type": "string", "description": "One-line summary (same as the SQLite index)." },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+      }
+    },
+    "item": {
+      "type": "object",
+      "required": ["id", "type", "text", "date", "sources"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["deadline", "exam", "todo"] },
+        "text": { "type": "string" },
+        "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "ISO date YYYY-MM-DD." },
+        "time": { "type": "string", "pattern": "^\\d{2}:\\d{2}$", "description": "Optional 24h local time HH:MM." },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Every file this item was found in, relative to root. Conflicts cite all sources (proposal example 5)."
+        },
+        "note": { "type": "string", "description": "Why this date was chosen, e.g. which announcement overrode the syllabus." }
+      }
+    },
+    "approvedPlan": {
+      "description": "Sent from the app to the executor after the user reviews the plan.",
+      "type": "object",
+      "required": ["root", "approved_moves", "rejected_ids", "approved_item_ids"],
+      "properties": {
+        "root": { "type": "string" },
+        "approved_moves": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "from", "to"],
+            "properties": {
+              "id": { "type": "string" },
+              "from": { "type": "string" },
+              "to": { "type": "string" }
+            }
+          }
+        },
+        "rejected_ids": { "type": "array", "items": { "type": "string" } },
+        "approved_item_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
