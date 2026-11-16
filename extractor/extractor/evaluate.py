@@ -43,7 +43,7 @@ def main(argv=None) -> int:
     ap.add_argument("inputs", nargs="+", type=Path)
     ap.add_argument("--mode", choices=router.MODES, default="rules")
     args = ap.parse_args(argv)
-    gold = json.loads(args.gold.read_text())
+    gold = {k: v for k, v in json.loads(args.gold.read_text()).items() if not k.startswith("_")}
     docs = [load_doc(f, root) for f, root in iter_files(args.inputs)]
     items, _ = router.run(docs, args.mode)
     res = score(items, gold)

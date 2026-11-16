@@ -46,6 +46,21 @@ class Label:
     strong: bool      # reliable on its own; weak labels (project, lab...) need a due-cue
 
 
+# "Q&A for midterm", "review for the final": a session about the exam, not the exam
+SKIP_BEFORE = re.compile(
+    r"(q\s*&\s*a|review|prep(?:aration)?|study\s+session|office\s+hours)\s+(?:for|of|before)?\s*(?:the\s+)?$", re.I)
+TENTATIVE = re.compile(r"\(\s*tentative\s*\)|\btentative\b", re.I)
+WEEKDAY_NAMES = re.compile(r"\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b", re.I)
+
+
+def is_grid_layout(doc: Doc) -> bool:
+    """A Mon-Fri calendar grid: text extraction loses which cell belongs to which date."""
+    lines = doc.lines
+    if any(len(set(m.lower() for m in WEEKDAY_NAMES.findall(ln))) >= 4 for ln in lines[:40]):
+        return True
+    return sum(1 for ln in lines if len(find_dates(ln, doc.ref_date, doc.doc_date)) >= 4) >= 3
+
+
 def find_labels(s: str) -> list[Label]:
     out: list[Label] = []
     for m in LABEL_RE.finditer(s):
@@ -55,7 +70,8 @@ def find_labels(s: str) -> list[Label]:
             out[-1] = Label(prev.start, m.end(), s[prev.start:m.end()], prev.strong or strong)
         else:
             out.append(Label(m.start(), m.end(), m.group(0), strong))
-    return [lb for lb in out if not SKIP_AFTER.match(s[lb.end:lb.end + 14])]
+    return [lb for lb in out
+            if not SKIP_AFTER.match(s[lb.end:lb.end + 14]) and not SKIP_BEFORE.search(s[max(0, lb.start - 24):lb.start])]
 
 
 def canon_label(label: str) -> str:
@@ -155,6 +171,12 @@ def _todo_from_line(line: str, doc: Doc) -> str | None:
     return m.group("t") if m else None
 
 
+def _mark_tentative(items: list[Item]) -> None:
+    for it in items:
+        if TENTATIVE.search(it.quote or "") and not it.note:
+            it.note = "Marked tentative in the source."
+
+
 def extract_rules(doc: Doc, top_k: int | None = None) -> tuple[list[Item], list[int]]:
     """Returns (items, uncovered_line_numbers). Uncovered lines are dated prose
     the rules couldn't label: candidates to hand to Claude in hybrid mode."""
@@ -212,4 +234,9 @@ def extract_rules(doc: Doc, top_k: int | None = None) -> tuple[list[Item], list[
                               override_hint=bool(CHANGE_WORD.search(line))))
         elif len(_clean(line, hits).split()) >= 5 and (not doc.is_syllabus or CUE_WORDS.search(line)):
             uncovered.append(i)     # prose with a date: worth asking Claude about
+    if is_grid_layout(doc):
+        # without cell positions these guesses are usually wrong: say nothing rather than a wrong date
+        items = [it for it in items if it.confidence >= 0.7]
+        uncovered = []
+    _mark_tentative(items)
     return items, uncovered

@@ -12,7 +12,7 @@ from .llm import ClaudeError, call_claude, extract_claude
 from .merge import merge_items, resolve_todos
 from .models import Chunk, Doc, Item
 from .retrieval import make_chunks, retrieve
-from .rules import extract_rules
+from .rules import extract_rules, is_grid_layout
 from .verify import filter_grounded
 
 MODES = ("rules", "claude", "hybrid")
@@ -35,11 +35,15 @@ def extract_doc(doc: Doc, mode: str, call=call_claude, report: dict | None = Non
     report = report if report is not None else {}
     items: list[Item] = []
     uncovered: list[int] = []
+    grid = mode != "claude" and is_grid_layout(doc)
+    if grid:
+        report.setdefault("warnings", []).append(
+            f"{doc.path}: calendar-grid layout detected; per-cell dates not supported yet")
     if mode in ("rules", "hybrid"):
         items, uncovered = extract_rules(doc)
     if mode == "claude":
         chunks = retrieve(doc, top_k=CLAUDE_TOP_K)
-    elif mode == "hybrid" and (uncovered or not items):
+    elif mode == "hybrid" and not grid and (uncovered or not items):
         chunks = _chunks_around(doc, uncovered) if uncovered else retrieve(doc, top_k=CLAUDE_TOP_K)
     else:
         chunks = []

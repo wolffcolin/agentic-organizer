@@ -175,3 +175,58 @@ def test_date_does_not_swallow_year_from_next_line():
 
 def test_time_never_taken_from_next_line():
     assert dates.find_dates("HW 2 due Oct 5\n9 am lecture", date(2026, 8, 24))[0].time is None
+
+
+# ---------- shapes from a real PL syllabus (spring 2025) and a calendar-grid schedule ----------
+PL_REF = date(2025, 1, 6)
+
+
+def test_review_session_is_not_the_exam():
+    assert got("Feb 27 Q&A for midterm", ref=PL_REF) == set()
+    assert got("Feb 27 Review for the midterm", ref=PL_REF) == set()
+    assert got("Mar 4 Midterm Exam", ref=PL_REF) == {("Midterm Exam", "2025-03-04")}
+
+
+def test_exam_row_after_review_row_has_no_conflict():
+    d = mk("8 Feb 25 Lab 4 +10: Mutability\n Feb 27 Q&A for midterm\n9 Mar 4 Midterm Exam", ref=PL_REF)
+    items, report = router.run([d], "rules")
+    assert [(i.text, i.date.isoformat()) for i in items] == [("Midterm Exam", "2025-03-04")]
+    assert report["warnings"] == []
+
+
+@pytest.mark.parametrize("line", [
+    "5 Feb 4 Lab 2 Day - HoF",
+    " Jan 16 03: Linux and Git (Lab 0 Day)",
+    "8 Feb 25 Lab 4 +10: Mutability",
+    "11 Mar 18 Spring Break (no class)",
+    "17 Apr 29 Final Review Q&A",
+    "18 May 7 Finals Week",
+    "4 Jan 28 Career Day (no class)",
+])
+def test_class_session_rows_are_not_deadlines(line):
+    assert got(line, ref=PL_REF) == set(), line
+
+
+def test_tentative_items_are_marked():
+    d = mk("Oct 8 Midterm (tentative)", ref=date(2026, 8, 24))
+    items, _ = router.run([d], "rules")
+    assert items[0].note == "Marked tentative in the source."
+
+
+def test_calendar_grid_gives_warning_not_wrong_dates():
+    text = ("Tuesday Detailed Course Schedule - Spring 2023:\n"
+            "Week Monday Tuesday Wednesday Thursday Friday\n"
+            "1 January 9 January 10 January 11 January 12 January 13\n"
+            "Class meets Read Ch. 1\n"
+            "Research Project 1 -\n"
+            "Individual Submission Feb 13\n")
+    items, report = router.run([mk(text, ref=date(2023, 1, 9))], "rules")
+    assert items == []
+    assert any("calendar-grid" in w for w in report["warnings"])
+
+
+def test_grid_documents_are_not_sent_to_claude_in_hybrid():
+    text = "Week Monday Tuesday Wednesday Thursday Friday\n1 January 9 January 10 January 11 January 12 January 13\n"
+    calls = []
+    router.run([mk(text, ref=date(2023, 1, 9))], "hybrid", call=lambda p: calls.append(p) or '{"items":[]}')
+    assert calls == []

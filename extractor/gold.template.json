@@ -1,0 +1,24 @@
+{
+  "_readme": [
+    "Copy this to private/gold.json and edit. Keys starting with _ are ignored.",
+    "One key per file, named relative to the folder you scan (scan 'private/' -> 'syllabus.pdf').",
+    "List every deadline, exam and to-do a student would want on their calendar, with the REAL date from the file.",
+    "'text' only needs to be recognisable: 'HW 1' = 'Homework 1' = 'Assignment 1'; 'Midterm' = 'Midterm exam'.",
+    "Leave [] for a file that has no dates; the scorer then counts any item the extractor invents as an error.",
+    "A to-do with no date in the file goes in the file that contains it, dated the day before its exam (that is what the extractor does).",
+    "When a later file moves a date (announcement vs syllabus), list the new date under the later file only."
+  ],
+
+  "syllabus.pdf": [
+    {"text": "HW 1", "date": "2026-09-04"},
+    {"text": "Midterm", "date": "2026-10-14"},
+    {"text": "Final exam", "date": "2026-12-10"}
+  ],
+  "a_syllabus_with_no_dates.pdf": [],
+  "announcement_nov8.txt": [
+    {"text": "HW 4", "date": "2026-11-12"}
+  ],
+  "Chapter 7 Study Guide.docx": [
+    {"text": "study ch. 7", "date": "2026-10-13"}
+  ]
+}

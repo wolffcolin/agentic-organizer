@@ -36,6 +36,8 @@ DISTRACTORS = [
     "{X} | Lecture on topic {w}", "No class {X}", "Office hours Tuesdays 2-4 pm", "Late work loses 10% per day",
     "Homework is worth 3/4 of your grade", "Course description and learning objectives", "Week {w} | {X} | Review of chapter {w}",
     "Instructor: Dr. Example (example@mines.edu)", "Room 305, building 12",
+    "{w} {X} Q&A for midterm", "{w} {X} Lab 2 Day - HoF", "{X} Spring Break (no class)",
+    "{X} Final Review Q&A", "{X} Career Day (no class)",
 ]
 
 
