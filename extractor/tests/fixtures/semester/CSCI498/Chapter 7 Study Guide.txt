@@ -1,0 +1,12 @@
+CSCI 498 - Chapter 7 Study Guide
+Posted: Sep 30, 2026
+
+Chapter 7: Model evaluation
+- Confusion matrices, precision, recall, F1
+- ROC curves and AUC
+- Cross-validation vs hold-out
+
+Notes from lecture: the bias-variance tradeoff shows up on every exam.
+
+TODO: study ch. 7 before the midterm
+[ ] redo the cross-validation example from lecture

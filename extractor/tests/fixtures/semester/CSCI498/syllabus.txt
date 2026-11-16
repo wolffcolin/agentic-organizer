@@ -1,0 +1,26 @@
+CSCI 498 - Applied Machine Learning
+Colorado School of Mines, Fall 2026
+Instructor: Dr. Example     Office hours: Tuesdays 2-4 pm
+
+Course description
+This course covers supervised learning, model evaluation and deployment.
+Study groups are encouraged. Late work loses 10% per day.
+
+Grading
+Homework 40%, Midterm 25%, Final exam 30%, participation 5%.
+
+Schedule
+Week | Date | Topic | Due
+1 | Aug 24 | Course introduction |
+2 | Aug 31 | Linear models | HW 1 due Sep 4
+4 | Sep 14 | Regularization | HW 2 due Sep 18
+6 | Sep 28 | Trees and ensembles | HW 3 due Oct 2
+7 | Oct 5 | Evaluation | HW 4 due Oct 9
+8 | Oct 12 | Review | Midterm exam on Wednesday, Oct 14, in class
+9 | Oct 26 | Neural networks | HW 5 due Oct 30
+11 | Nov 9 | Deployment | HW 6 due Nov 13 by 11:59 pm
+12 | Nov 16 | Fairness | HW 7 due Nov 20
+14 | Nov 30 | Wrap-up | HW 8 due Dec 4
+Finals week | Final exam: Dec 10, 7:00 pm
+
+Please see Canvas for announcements.

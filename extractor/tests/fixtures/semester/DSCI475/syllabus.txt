@@ -1,0 +1,9 @@
+DSCI 475 - Data Science Capstone
+Fall 2026
+
+Assignments
+HW 3 due Oct 27
+HW 4 due Nov 10
+HW 5 due Dec 1
+Project proposal due Oct 20
+Final project presentation: Dec 8
