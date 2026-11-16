@@ -224,7 +224,7 @@ def test_real_world_schedule_rows(tmp_path):
     items, report = router.run([d], "rules")
     got = {(i.text, i.date.isoformat()) for i in items}
     assert got == {
-        ("Project check point #1", "2026-09-15"), ("Final Project check point #1", "2026-09-17"),
+        ("Project check point #1", "2026-09-15"),          # Sep 15 / Sep 17 are slots: one item, earliest
         ("Monthly homework", "2026-10-01"), ("Monthly homework", "2026-11-03"),   # trailing "due." binds to its own row
         ("Final Project Presentation", "2026-12-03"), ("Final project paper/report", "2026-12-16"),
         ("Midterm", "2026-10-08"),

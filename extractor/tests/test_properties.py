@@ -113,3 +113,13 @@ def test_cli_class_override_and_ref_date(tmp_path):
     cli.main(["extract", str(f), "--mode", "rules", "--class", "MATH101", "--ref-date", "2027-01-05", "--out", str(out)])
     rec = json.loads(out.read_text())["records"][0]
     assert rec["class"] == "MATH101" and rec["items"][0]["date"] == "2027-01-20"
+
+
+def test_score_accepts_any_listed_slot_and_does_not_penalise_it():
+    from extractor.models import Item
+    gold = {"a.txt": [{"text": "Checkpoint 1", "date": "2026-09-15", "alternates": ["2026-09-17"]}]}
+    for d in (date(2026, 9, 15), date(2026, 9, 17)):
+        r = evaluate.score([Item("deadline", "Checkpoint 1", d, "a.txt")], gold)["a.txt"]
+        assert r["recall"] == 1 and r["precision"] == 1 and r["extra"] == []
+    r = evaluate.score([Item("deadline", "Checkpoint 1", date(2026, 9, 20), "a.txt")], gold)["a.txt"]
+    assert r["recall"] == 0 and r["precision"] == 0

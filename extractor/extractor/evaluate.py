@@ -1,7 +1,8 @@
 """Score extraction against labelled dates.
 
 gold.json: {"<path relative to the input folder>": [{"text": "HW 1", "date": "2026-09-04"}, ...]}
-Items match on (normalised label, date). A merged item (e.g. a moved deadline) belongs to
+An entry may add "alternates": ["2026-09-06"] for slots the student can choose between.
+Items match on (normalised label, date); any listed date of an entry counts. A merged item (e.g. a moved deadline) belongs to
 the file that won the conflict.
 
   python -m extractor.evaluate gold.json private/ --mode rules
@@ -29,11 +30,16 @@ def score(items, gold: dict[str, list[dict]]) -> dict:
         pred.setdefault(it.source, set()).add(_k(it.text, it.date.isoformat()))
     out = {}
     for path in sorted(set(gold) | set(pred)):
-        want = {_k(g["text"], g["date"]) for g in gold.get(path, [])}
+        entries = [{_k(g["text"], d) for d in [g["date"], *g.get("alternates", [])]} for g in gold.get(path, [])]
         have = pred.get(path, set())
-        tp = len(want & have)
-        out[path] = {"precision": tp / len(have) if have else 1.0, "recall": tp / len(want) if want else 1.0,
-                     "missed": sorted(want - have), "extra": sorted(have - want)}
+        accepted = set().union(*entries) if entries else set()
+        hit = [e for e in entries if e & have]
+        out[path] = {
+            "precision": len(have & accepted) / len(have) if have else 1.0,
+            "recall": len(hit) / len(entries) if entries else 1.0,
+            "missed": sorted(min(e) for e in entries if not e & have),
+            "extra": sorted(have - accepted),
+        }
     return out
 
 

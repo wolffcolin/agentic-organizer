@@ -43,3 +43,4 @@ class Item:
     note: str | None = None
     sources: list[str] = field(default_factory=list)
     derived: bool = False     # date computed from an anchor, not found in text
+    alternates: list[date] = field(default_factory=list)   # other slots listed for the same item

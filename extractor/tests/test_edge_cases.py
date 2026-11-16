@@ -230,3 +230,49 @@ def test_grid_documents_are_not_sent_to_claude_in_hybrid():
     calls = []
     router.run([mk(text, ref=date(2023, 1, 9))], "hybrid", call=lambda p: calls.append(p) or '{"items":[]}')
     assert calls == []
+
+
+# ---------- slot groups: several days offered for one item, you only need one ----------
+def _items(text, ref=date(2026, 8, 24)):
+    return router.run([mk(text, ref=ref)], "rules")
+
+
+def test_slots_become_one_item_at_the_earliest_date():
+    items, report = _items("Checkpoint 1 (Due Sept 15)\n9/15/26 Project check point #1 9/17/26 Final Project check point #1")
+    assert len(items) == 1
+    it = items[0]
+    assert it.date == date(2026, 9, 15) and it.alternates == [date(2026, 9, 17)]
+    assert "Sep 15" in it.note and "Sep 17" in it.note and "one" in it.note
+    assert report["warnings"] == []                      # not reported as a conflict
+
+
+def test_slots_from_two_sections_of_one_file_merge():
+    items, _ = _items("Week 12 11/10/26 Project check point #3 11/12/26 Project check point #3\n"
+                      "3. Checkpoint 3: Progress Update Presentation (Due Nov 10)")
+    assert len(items) == 1 and items[0].date == date(2026, 11, 10) and items[0].alternates == [date(2026, 11, 12)]
+
+
+def test_monthly_recurring_items_are_not_slots():
+    items, _ = _items("Monthly homework due Oct 1\nMonthly homework due Nov 3\nMonthly homework due Nov 24")
+    assert sorted(i.date.isoformat() for i in items) == ["2026-10-01", "2026-11-03", "2026-11-24"]
+    assert all(not i.alternates for i in items)
+
+
+def test_weekly_items_a_week_apart_are_not_slots():
+    items, _ = _items("Quiz due Sep 8\nQuiz due Sep 15\nQuiz due Sep 22")
+    assert len(items) == 3 and all(not i.alternates for i in items)
+
+
+def test_frequent_recurring_item_is_not_collapsed_into_pairs():
+    lines = "\n".join(f"Reading response due {d}" for d in ("Sep 1", "Sep 3", "Sep 8", "Sep 10", "Sep 15", "Sep 17"))
+    items, _ = _items(lines)
+    assert len(items) == 6
+
+
+def test_slots_do_not_hide_a_real_cross_file_move():
+    syl = mk("Checkpoint 1: Sep 15 or Sep 17", name="syllabus.txt")
+    ann = Doc("ann.txt", "ann.txt", "Posted: Sep 10, 2026\nCheckpoint 1 has been moved to Sep 22.",
+              date(2026, 9, 10), date(2026, 8, 24), "CSCI498", False)
+    items, _ = router.run([syl, ann], "rules")
+    cp = [i for i in items if "heckpoint" in i.text]
+    assert len(cp) == 1 and cp[0].date == date(2026, 9, 22) and set(cp[0].sources) == {"ann.txt", "syllabus.txt"}

@@ -17,7 +17,7 @@ Put your own real files in `extractor/private/` (gitignored) and point the CLI a
 ## Scoring against your own labels
 Write `gold.json` (kept private, next to your files): `{"syllabus.pdf": [{"text": "Midterm", "date": "2026-10-08"}]}`, then
 `.venv/bin/python -m extractor.evaluate gold.json private/ --mode rules` prints precision/recall per file plus what was missed or extra.
-`tests/fixtures/gold.json` is the committed example; `tests/test_properties.py` also recovers 300 randomly generated syllabi exactly.
+An entry may add `"alternates": ["2026-09-17"]` for slots (any listed date counts). `tests/fixtures/gold.json` is the committed example; `tests/test_properties.py` also recovers 300 randomly generated syllabi exactly.
 
 ## Pipeline
 read → chunk → **retrieve** (keyword/date-weighted scoring, no LLM) → extract (regex/date rules, and/or Claude) → **ground check** (every date must appear in its source; Claude items must quote the source verbatim) → **merge** across files → records + schema validation.
@@ -25,6 +25,7 @@ read → chunk → **retrieve** (keyword/date-weighted scoring, no LLM) → extr
 - Missing years are inferred from the semester header ("Fall 2026"), else the file's posted date / mtime; a weekday name ("Wednesday, Oct 14") picks the matching year.
 - Relative dates ("next Friday") resolve from a `Posted:` header, else the file mtime.
 - Conflicts: an explicit "moved/extended" statement wins, else the newer file; `sources` lists every file and `note` says why.
+- Slots: a file that lists one label on 2-3 dates within ~5 days ("Checkpoint 1: Sep 15 or Sep 17") is offering slots, so you get one item at the earliest date with the others in `note`. Recurring items (monthly homework, weekly quizzes) stay separate. A real cross-file move still wins over slots.
 - Undated to-dos ("TODO: study ch. 7 before the midterm") get the day before the next matching exam in the same class, citing the exam's file; if no exam is known they are listed as `unscheduled` in `_extractor` rather than given an invented date.
 - `_extractor` (extra top-level key) carries warnings, dropped-ungrounded items and unscheduled to-dos.
 
