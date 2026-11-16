@@ -14,23 +14,23 @@ WEEKDAYS = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6
 _MON = (r"(?P<mon>Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|"
         r"Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?")
 _WD = (r"(?:(?P<wd>Mon(?:day)?|Tue(?:s(?:day)?)?|Wed(?:nesday)?|Thu(?:r(?:s(?:day)?)?)?|"
-       r"Fri(?:day)?|Sat(?:urday)?|Sun(?:day)?)\.?,?\s+)?")
+       r"Fri(?:day)?|Sat(?:urday)?|Sun(?:day)?)\.?,?[ \t]+)?")
 
 RE_MONTH_DAY = re.compile(
-    _WD + _MON + r"\s+(?P<day>\d{1,2})(?!\d)(?:st|nd|rd|th)?(?:,?\s+(?P<year>20\d\d)(?!\d))?",
+    _WD + _MON + r"[ \t]+(?P<day>\d{1,2})(?!\d)(?:st|nd|rd|th)?(?:,?[ \t]+(?P<year>20\d\d)(?!\d))?",
     re.I)
 RE_DAY_MONTH = re.compile(
-    _WD + r"(?P<day>\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?" + _MON + r"(?:,?\s+(?P<year>20\d\d)(?!\d))?",
+    _WD + r"(?P<day>\d{1,2})(?:st|nd|rd|th)?[ \t]+(?:of[ \t]+)?" + _MON + r"(?:,?[ \t]+(?P<year>20\d\d)(?!\d))?",
     re.I)
 RE_ISO = re.compile(r"(?<!\d)(?P<year>20\d\d)-(?P<m>\d{2})-(?P<d>\d{2})(?!\d)")
 RE_NUMERIC = re.compile(
-    _WD + r"(?<![\d/])(?P<m>\d{1,2})/(?P<d>\d{1,2})(?:/(?P<year>\d{4}|\d{2}))?(?![\d/])", re.I)
+    _WD + r"(?<![\d/])(?P<m>\d{1,2})/(?P<d>\d{1,2})(?:/(?P<year>\d{4}|\d{2}))?(?![\d/])(?![ \t]*(?:of\b|%|pts?\b|points?\b|credits?\b|hours?\b|hrs?\b))", re.I)
 RE_REL_WD = re.compile(
-    r"\b(?P<which>next|this|coming)\s+(?P<wd>Mon(?:day)?|Tue(?:s(?:day)?)?|Wed(?:nesday)?|"
+    r"\b(?P<which>next|this|coming)[ \t]+(?P<wd>Mon(?:day)?|Tue(?:s(?:day)?)?|Wed(?:nesday)?|"
     r"Thu(?:r(?:s(?:day)?)?)?|Fri(?:day)?|Sat(?:urday)?|Sun(?:day)?)\b", re.I)
 RE_TOMORROW = re.compile(r"\btomorrow\b", re.I)
-RE_IN_N = re.compile(r"\bin\s+(?P<n>\d{1,2})\s+(?P<unit>day|week)s?\b", re.I)
-RE_TIME = re.compile(r"(?<![\d:-])(?P<h>\d{1,2})(?::(?P<min>\d{2}))?\s*(?P<ap>[ap])\.?m\.?(?![a-z])", re.I)
+RE_IN_N = re.compile(r"\bin[ \t]+(?P<n>\d{1,2})[ \t]+(?P<unit>day|week)s?\b", re.I)
+RE_TIME = re.compile(r"(?<![\d:-])(?P<h>\d{1,2})(?::(?P<min>\d{2}))?[ \t]*(?P<ap>[ap])\.?m\.?(?![a-z])", re.I)
 
 
 @dataclass
@@ -69,7 +69,8 @@ def _infer_year(m: int, d: int, ref: date, wd: int | None) -> date | None:
 
 
 def _time_after(text: str, end: int) -> str | None:
-    m = RE_TIME.search(text, end, min(len(text), end + 30))
+    stop = text.find("\n", end)
+    m = RE_TIME.search(text, end, min(len(text), end + 30, stop if stop != -1 else len(text)))
     if not m:
         return None
     h = int(m.group("h"))

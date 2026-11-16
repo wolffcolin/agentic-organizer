@@ -1,0 +1,20 @@
+{
+  "CSCI498/syllabus.txt": [
+    {"text": "HW 1", "date": "2026-09-04"}, {"text": "HW 2", "date": "2026-09-18"},
+    {"text": "HW 3", "date": "2026-10-02"}, {"text": "HW 4", "date": "2026-10-09"},
+    {"text": "Midterm", "date": "2026-10-14"}, {"text": "HW 5", "date": "2026-10-30"},
+    {"text": "HW 6", "date": "2026-11-13"}, {"text": "HW 7", "date": "2026-11-20"},
+    {"text": "HW 8", "date": "2026-12-04"}, {"text": "Final exam", "date": "2026-12-10"}
+  ],
+  "CSCI498/Chapter 7 Study Guide.txt": [
+    {"text": "study ch. 7", "date": "2026-10-13"},
+    {"text": "redo the cross-validation example from lecture", "date": "2026-10-13"}
+  ],
+  "DSCI475/syllabus.txt": [
+    {"text": "HW 3", "date": "2026-10-27"}, {"text": "Project proposal", "date": "2026-10-20"},
+    {"text": "HW 5", "date": "2026-12-01"}, {"text": "Final project presentation", "date": "2026-12-08"}
+  ],
+  "DSCI475/announcement_nov8.txt": [
+    {"text": "HW 4", "date": "2026-11-12"}
+  ]
+}

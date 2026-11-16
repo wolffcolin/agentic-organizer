@@ -14,6 +14,11 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 Modes: `rules` (offline, no model), `claude` (`claude -p` on the top retrieved chunks), `hybrid` (default: rules first, Claude only for prose lines the rules can't label or files where they found nothing; falls back to rules if Claude fails). Options: `--class CSCI498`, `--class-map map.json`, `--ref-date YYYY-MM-DD`.
 Put your own real files in `extractor/private/` (gitignored) and point the CLI at them.
 
+## Scoring against your own labels
+Write `gold.json` (kept private, next to your files): `{"syllabus.pdf": [{"text": "Midterm", "date": "2026-10-08"}]}`, then
+`.venv/bin/python -m extractor.evaluate gold.json private/ --mode rules` prints precision/recall per file plus what was missed or extra.
+`tests/fixtures/gold.json` is the committed example; `tests/test_properties.py` also recovers 300 randomly generated syllabi exactly.
+
 ## Pipeline
 read → chunk → **retrieve** (keyword/date-weighted scoring, no LLM) → extract (regex/date rules, and/or Claude) → **ground check** (every date must appear in its source; Claude items must quote the source verbatim) → **merge** across files → records + schema validation.
 

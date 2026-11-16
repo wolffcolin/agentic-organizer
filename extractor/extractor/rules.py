@@ -173,7 +173,8 @@ def extract_rules(doc: Doc, top_k: int | None = None) -> tuple[list[Item], list[
             am = ANCHOR_RE.search(line)
             anchor = am.group("a").lower() if am else None
             first = live[0] if live else None
-            text = re.sub(ANCHOR_RE, "", _clean(todo, hits)).strip(" .,:;-–—")
+            todo_hits = find_dates(todo, doc.ref_date, doc.doc_date)     # offsets relative to `todo`
+            text = re.sub(ANCHOR_RE, "", _clean(todo, todo_hits)).strip(" .,:;-–—")
             if text:
                 items.append(Item("todo", text, first.date if first else None, doc.path, quote=line.strip(),
                                   time=first.time if first else None,
